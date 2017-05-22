@@ -1,0 +1,32 @@
+{
+  "name": "http-rpc",
+  "version": "0.0.1",
+  "description": "An easy to use RPC implementation over HTTP ",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc ava --verbose"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hild-Franck/http-rpc.git"
+  },
+  "keywords": [
+    "http",
+    "rpc"
+  ],
+  "author": "Franck Hild <franck.hild@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Hild-Franck/http-rpc/issues"
+  },
+  "homepage": "https://github.com/Hild-Franck/http-rpc#readme",
+  "devDependencies": {
+    "ava": "^0.19.1",
+    "nyc": "^10.3.2"
+  },
+  "ava": {
+    "files": [
+      "tests/**/*.test.js"
+    ]
+  }
+}
