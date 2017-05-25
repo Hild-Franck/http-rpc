@@ -1,7 +1,9 @@
 const http = require('http')
 
 const server = http.createServer((req, res) => {
-	console.log(req.url)
+	res.write(JSON.stringify({
+		chicken: 'rosted'
+	}))
 	res.end()
 })
 

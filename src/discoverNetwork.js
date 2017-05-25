@@ -6,7 +6,7 @@ const discoverNetwork = ({ ipList }) => new Promise((resolve, reject) => {
 
 	ipList.forEach((ip, idx) => {
 		if (idx === ipList.length - 1) {
-			timeout = setTimeout(() => reject(new Error('Timeout')), 1000)
+			timeout = setTimeout(() => reject(new Error('No service reached')), 5000)
 		}
 		const req = http.get(`http://${ip}/network`, res => {
 			if (!done) {

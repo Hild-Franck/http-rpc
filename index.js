@@ -2,6 +2,7 @@ const http = require('http')
 
 const config = require('./config')
 const discoverNetwork = require('./src/discoverNetwork')
+const setNetworkStatus = require('./src/setNetworkStatus')
 
 const server = http.createServer((req, res) => {
 	res.end()
@@ -9,7 +10,6 @@ const server = http.createServer((req, res) => {
 
 server.listen(config.ip)
 
-discoverNetwork(config).then(res => {
-	console.log('Data reached !')
-	console.log(res)
-})
+discoverNetwork(config)
+	.then(setNetworkStatus)
+	.catch(err => console.log(err))
