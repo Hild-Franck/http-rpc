@@ -10,6 +10,8 @@ const server = http.createServer((req, res) => {
 
 server.listen(config.ip)
 
+console.log(`[INFO] Starting server on port ${config.ip}`)
+
 discoverNetwork(config)
 	.then(setNetworkStatus)
 	.catch(err => console.log(err))
