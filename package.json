@@ -29,5 +29,8 @@
     "files": [
       "tests/**/*.test.js"
     ]
+  },
+  "dependencies": {
+    "level": "^1.7.0"
   }
 }
