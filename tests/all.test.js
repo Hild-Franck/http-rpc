@@ -32,7 +32,18 @@ ava.cb('get a JSON from the reached service', t => {
 ava.cb('set the network status', t => {
 	database.init().getServiceStatus('service-test01').then(value => {
 		console.log(value)
-		t.is(JSON.parse(value).status, 'up')
+		t.is(value.status, 'up')
 		t.end()
+	})
+})
+
+ava.cb('update the network', t => {
+	database.init().updateNetwork([
+		{ type: 'put', key: 'service-test01', value: { status: 'stopping' } }
+	]).then(nodes => {
+		database.getServiceStatus('service-test01').then(value => {
+			t.is(value.status, 'stopping')
+			t.end()
+		})
 	})
 })
