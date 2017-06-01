@@ -22,6 +22,7 @@
   "homepage": "https://github.com/Hild-Franck/http-rpc#readme",
   "devDependencies": {
     "ava": "^0.19.1",
+    "concat-stream": "^1.6.0",
     "coveralls": "^2.13.1",
     "nyc": "^10.3.2"
   },

@@ -1,10 +1,15 @@
 const ava = require('ava')
 const http = require('http')
+const concat = require('concat-stream')
 
 const promise = require('./databaseSetup')
 const discoverNetwork = require('../src/discoverNetwork')
 const setNetworkStatus = require('../src/setNetworkStatus')
 const database = require('../src/database')
+
+http.createServer((req, res) => {
+	database.init().getNetwork(res)
+}).listen(8000)
 
 ava.cb.before(t => {
 	promise.then(db => {
@@ -31,7 +36,6 @@ ava.cb('get a JSON from the reached service', t => {
 
 ava.cb('set the network status', t => {
 	database.init().getServiceStatus('service-test01').then(value => {
-		console.log(value)
 		t.is(value.status, 'up')
 		t.end()
 	})
@@ -46,4 +50,12 @@ ava.cb('update the network', t => {
 			t.end()
 		})
 	})
+})
+
+ava.cb('get all database', t => {
+	database.init().getNetwork(concat(buf => {
+		t.is(buf[0].value.status, 'stopping')
+		t.is(buf[1].value.status, 'starting')
+		t.end()
+	}))
 })
