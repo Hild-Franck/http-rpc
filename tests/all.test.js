@@ -18,7 +18,7 @@ ava.cb.before(t => {
 })
 
 ava.cb('reach a service from a list of ip', t => {
-	discoverNetwork({ ipList: ['localhost:8080'] })
+	discoverNetwork({ ipList: ['localhost:8080', 'localhost:8099', 'localhost:8080'] })
 		.then(res => {
 			t.pass()
 			t.end()
@@ -27,9 +27,11 @@ ava.cb('reach a service from a list of ip', t => {
 
 ava.cb('get a JSON from the reached service', t => {
 	http.get(`http://localhost:8080`, res => {
-		setNetworkStatus(res).then(obj => {
-			t.is(obj.chicken, 'rosted')
-			t.end()
+		setNetworkStatus(res).then(db => {
+			db.getServiceStatus('jesus').then(value => {
+				t.is(value.chicken, 'rosted')
+				t.end()
+			})
 		})
 	})
 })
@@ -54,8 +56,9 @@ ava.cb('update the network', t => {
 
 ava.cb('get all database', t => {
 	database.init().getNetwork(concat(buf => {
-		t.is(buf[0].value.status, 'stopping')
-		t.is(buf[1].value.status, 'starting')
+		t.is(buf[0].value.chicken, 'rosted')
+		t.is(buf[1].value.status, 'stopping')
+		t.is(buf[2].value.status, 'starting')
 		t.end()
 	}))
 })

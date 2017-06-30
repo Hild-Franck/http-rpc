@@ -8,7 +8,7 @@ branches:
     - develop
 
 before_script:
-  - nohup node tests/server.js &
+  - nohup npm run server &
 
 script:
   - npm test

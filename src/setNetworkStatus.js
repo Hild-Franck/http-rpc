@@ -1,3 +1,5 @@
+const database = require('./database')
+
 const setNetworkStatus = res => new Promise((resolve, reject) => {
 	res.setEncoding('utf8')
 	let rawData = ''
@@ -6,7 +8,7 @@ const setNetworkStatus = res => new Promise((resolve, reject) => {
 	})
 	res.on('end', () => {
 		const parsedData = JSON.parse(rawData)
-		resolve(parsedData)
+		database.updateNetwork(parsedData).then(resolve)
 	})
 })
 

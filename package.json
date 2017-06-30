@@ -4,7 +4,8 @@
   "description": "An easy to use RPC implementation over HTTP ",
   "main": "index.js",
   "scripts": {
-    "test": "nyc --reporter=lcov --reporter=text ava --verbose"
+    "test": "nyc --reporter=lcov --reporter=text ava --verbose",
+    "server": "node tests/server.js"
   },
   "repository": {
     "type": "git",

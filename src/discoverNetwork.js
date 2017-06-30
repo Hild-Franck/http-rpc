@@ -8,6 +8,7 @@ const discoverNetwork = ({ ipList }) => new Promise((resolve, reject) => {
 		if (idx === ipList.length - 1) {
 			timeout = setTimeout(() => reject(new Error('No service reached')), 5000)
 		}
+		
 		const req = http.get(`http://${ip}`, res => {
 			if (!done) {
 				done = true
@@ -15,8 +16,8 @@ const discoverNetwork = ({ ipList }) => new Promise((resolve, reject) => {
 				console.log(`[SUCCESS] Service reached at ${ip}`)
 				resolve(res)
 			}
-
 		})
+
 		req.on('error', ({ address, port }) => {
 			console.log(`[WARNING] ${address}:${port} not reachable`)
 		})
