@@ -56,9 +56,14 @@ ava.cb('update the network', t => {
 
 ava.cb('get all database', t => {
 	database.init().getNetwork(concat(buf => {
-		t.is(buf[0].value.chicken, 'rosted')
-		t.is(buf[1].value.status, 'stopping')
-		t.is(buf[2].value.status, 'starting')
+		if (buf.length === 3) {
+			t.is(buf[0].value.chicken, 'rosted')
+			t.is(buf[1].value.status, 'stopping')
+			t.is(buf[2].value.status, 'starting')
+		} else {
+			t.is(buf[0].value.status, 'stopping')
+			t.is(buf[1].value.status, 'starting')
+		}
 		t.end()
 	}))
 })
