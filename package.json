@@ -1,6 +1,6 @@
 {
   "name": "http-rpc",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "An easy to use RPC implementation over HTTP ",
   "main": "index.js",
   "scripts": {

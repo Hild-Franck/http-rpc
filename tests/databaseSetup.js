@@ -5,9 +5,9 @@ const data = [
 	{ type: 'put', key: 'service-test02', value: { status: 'starting' } }
 ]
 
-module.exports = new Promise((resolve, reject) => {
+module.exports = dbName => new Promise((resolve, reject) => {
 	console.log('Opening store in setup')
-	const db = level('../networkDB', { valueEncoding: 'json' })
+	const db = level(`../${dbName}`, { valueEncoding: 'json' })
 	db.batch(data, err => {
 		db.close()
 		resolve(db)

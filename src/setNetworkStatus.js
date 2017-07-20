@@ -8,7 +8,7 @@ const setNetworkStatus = res => new Promise((resolve, reject) => {
 	})
 	res.on('end', () => {
 		const parsedData = JSON.parse(rawData)
-		database.init().updateNetwork(parsedData).then(resolve)
+		database.init('networkDB').updateNetwork(parsedData).then(resolve)
 	})
 })
 

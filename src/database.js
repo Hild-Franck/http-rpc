@@ -1,14 +1,23 @@
 const level = require('level')
+const concat = require('concat-stream')
 
 const database = {
 	store: undefined,
-	init: () => {
+	clear: () =>
+		database.getNetwork()
+			.then(network => {
+				console.log('network: ', network)
+				network.reduce((batch, service) => {
+					return batch.del(service.key)
+				}, database.store.batch()).write()
+			}),
+	init: dbName => {
 		if (database.store) {
 			console.log('[WARNING] Store already open')
 			return database
 		}
 		console.log('Opening store in database')
-		database.store = level('../networkDB', { valueEncoding: 'json' })
+		database.store = level(`../${dbName}`, { valueEncoding: 'json' })
 		return database
 	},
 	updateNetwork: nodes => new Promise((resolve, reject) => {
@@ -18,7 +27,9 @@ const database = {
 			resolve(database)
 		})
 	}),
-	getNetwork: res => database.store.createReadStream().pipe(res),
+	pipeNetwork: res => database.store.createReadStream().pipe(res),
+	getNetwork: () => new Promise((resolve, reject) =>
+		database.store.createReadStream().pipe(concat(resolve))),
 	getServiceStatus: serviceName => new Promise((resolve, reject) => {
 		database.store.get(serviceName, (err, value) => {
 			if (err) return reject(err)
