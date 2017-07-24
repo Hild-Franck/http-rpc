@@ -1,24 +1,29 @@
-const level = require('level')
+const loki = require('lokijs')
+const db = new loki('data.db')
+
+const services = db.addCollection('services')
+
+serviceUpdate = {
+	update: service => serviceUpdate[service.status](service),
+	starting: ({ status, name, hash }) => services.insert({ status, name, hash }),
+	up: ({ status, name, hash }) => {
+		const service = services.findOne({ hash })
+		if (!service)
+			return serviceUpdate.starting({ status, name, hash })
+		service.status = status
+		services.update(service)
+
+	},
+	down: ({ hash }) => {
+		const service = services.findOne({ hash })
+		services.remove(service)
+	}
+}
 
 const database = {
-	store: undefined,
-	init: () => {
-		if (database.store) {
-			console.log('[WARNING] Store already open')
-			return database
-		}
-		console.log('Opening store in database')
-		database.store = level('../networkDB', { valueEncoding: 'json' })
-		return database
-	},
-	updateNetwork: nodes => new Promise((resolve, reject) => {
-		database.store.batch(nodes, err => {
-			if (err) return reject(err)
-			console.log('[SUCCESS] Network status have been updated')
-			resolve(database)
-		})
-	}),
+	services,
 	getNetwork: res => database.store.createReadStream().pipe(res),
+	updateNetwork: services => services.forEach(serviceUpdate.update),
 	getServiceStatus: serviceName => new Promise((resolve, reject) => {
 		database.store.get(serviceName, (err, value) => {
 			if (err) return reject(err)
