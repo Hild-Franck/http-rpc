@@ -1,4 +1,5 @@
 const loki = require('lokijs')
+const stream = require('stream')
 const db = new loki('data.db')
 
 const services = db.addCollection('services')
@@ -22,15 +23,20 @@ serviceUpdate = {
 
 const database = {
 	services,
-	getNetwork: res => database.store.createReadStream().pipe(res),
-	updateNetwork: services => services.forEach(serviceUpdate.update),
-	getServiceStatus: serviceName => new Promise((resolve, reject) => {
-		database.store.get(serviceName, (err, value) => {
-			if (err) return reject(err)
-				console.log(`[SUCCESS] ${serviceName} have been get`)
-				resolve(value)
+	pipeNetwork: res => {
+		let bool = true;
+		const data = JSON.stringify(services.find())
+		const readable = new stream.Readable({
+			read(size) {
+				this.push(bool ? data : null)
+				bool = false
+			}
 		})
-	})
+		readable.pipe(res)
+	},
+	getNetwork: () => services.find(),
+	updateNetwork: services => services.forEach(serviceUpdate.update),
+	getInstanceStatus: ({ hash }) => services.findOne({ hash })
 }
 
 module.exports = database

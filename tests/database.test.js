@@ -1,8 +1,7 @@
 const ava = require('ava')
-const http = require('http')
+const concat = require('concat-stream')
 
 const database = require('../src/database')
-
 const setup = require('./databaseSetup')
 
 ava.before(t => setup(database))
@@ -22,29 +21,16 @@ ava('update network', t => {
 	t.is(data[1].hash, '2')
 })
 
-// ava.cb('set the network status', t => {
-// 	database.init().getServiceStatus('service-test01').then(value => {
-// 		t.is(value.status, 'up')
-// 		t.end()
-// 	})
-// })
+ava('get all network', t => {
+	const network = database.getNetwork()
 
-// ava.cb('update the network', t => {
-// 	database.init().updateNetwork([
-// 		{ type: 'put', key: 'service-test01', value: { status: 'stopping' } }
-// 	]).then(nodes => {
-// 		database.getServiceStatus('service-test01').then(value => {
-// 			t.is(value.status, 'stopping')
-// 			t.end()
-// 		})
-// 	})
-// })
+	t.is(network.length, 2)
+})
 
-// ava.cb('get all database', t => {
-// 	database.init().getNetwork(concat(buf => {
-// 		console.log('Buf: ', buf)
-// 		t.is(buf[0].value.chicken, 'rosted')
-// 		t.is(buf[1].value.status, 'stopping')
-// 		t.end()
-// 	}))
-// })
+ava.cb('pipe network', t => {
+	database.pipeNetwork(concat(buff => {
+		const network = JSON.parse(buff.toString())
+		t.is(network.length, 2)
+		t.end()
+	}))
+})
