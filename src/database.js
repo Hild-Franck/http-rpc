@@ -24,15 +24,9 @@ serviceUpdate = {
 const database = {
 	services,
 	pipeNetwork: res => {
-		let bool = true;
 		const data = JSON.stringify(services.find())
-		const readable = new stream.Readable({
-			read(size) {
-				this.push(bool ? data : null)
-				bool = false
-			}
-		})
-		readable.pipe(res)
+		res.write(data)
+		res.end()
 	},
 	getNetwork: () => services.find(),
 	updateNetwork: services => services.forEach(serviceUpdate.update),
