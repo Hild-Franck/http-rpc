@@ -30,7 +30,7 @@ const database = {
 	},
 	getNetwork: () => services.find(),
 	updateNetwork: services => services.forEach(serviceUpdate.update),
-	getInstanceStatus: ({ hash }) => services.findOne({ hash })
+	getInstanceStatus: hash => services.findOne(hash)
 }
 
 module.exports = database

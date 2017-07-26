@@ -3,9 +3,9 @@ const http = require('http')
 const server = http.createServer((req, res) => {
 	console.log('Http request received')
 	res.write(JSON.stringify([{
-		type: 'put',
-		key: 'jesus',
-		value: { chicken: 'rosted' }
+		hash: '42',
+		name: 'myCoolService',
+		status: 'up'
 	}]))
 	res.end()
 })
