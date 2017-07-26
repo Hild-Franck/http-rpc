@@ -1,15 +1,6 @@
-const level = require('level')
-
 const data = [
-	{ type: 'put', key: 'service-test01', value: { status: 'up' } },
-	{ type: 'put', key: 'service-test02', value: { status: 'starting' } }
+	{ status: 'starting', name: 'service01', hash: '1'},
+	{ status: 'up', name: 'service00', hash: '0'}
 ]
 
-module.exports = dbName => new Promise((resolve, reject) => {
-	console.log('Opening store in setup')
-	const db = level(`../${dbName}`, { valueEncoding: 'json' })
-	db.batch(data, err => {
-		db.close()
-		resolve(db)
-	})
-})
+module.exports = database => database.services.insert(data)

@@ -1,42 +1,36 @@
-const level = require('level')
-const concat = require('concat-stream')
+const loki = require('lokijs')
+const stream = require('stream')
+const db = new loki('data.db')
+
+const services = db.addCollection('services')
+
+serviceUpdate = {
+	update: service => serviceUpdate[service.status](service),
+	starting: ({ status, name, hash }) => services.insert({ status, name, hash }),
+	up: ({ status, name, hash }) => {
+		const service = services.findOne({ hash })
+		if (!service)
+			return serviceUpdate.starting({ status, name, hash })
+		service.status = status
+		services.update(service)
+
+	},
+	down: ({ hash }) => {
+		const service = services.findOne({ hash })
+		services.remove(service)
+	}
+}
 
 const database = {
-	store: undefined,
-	clear: () =>
-		database.getNetwork()
-			.then(network => {
-				console.log('network: ', network)
-				network.reduce((batch, service) => {
-					return batch.del(service.key)
-				}, database.store.batch()).write()
-			}),
-	init: dbName => {
-		if (database.store) {
-			console.log('[WARNING] Store already open')
-			return database
-		}
-		console.log('Opening store in database')
-		database.store = level(`../${dbName}`, { valueEncoding: 'json' })
-		return database
+	services,
+	pipeNetwork: res => {
+		const data = JSON.stringify(services.find())
+		res.write(data)
+		res.end()
 	},
-	updateNetwork: nodes => new Promise((resolve, reject) => {
-		database.store.batch(nodes, err => {
-			if (err) return reject(err)
-			console.log('[SUCCESS] Network status have been updated')
-			resolve(database)
-		})
-	}),
-	pipeNetwork: res => database.store.createReadStream().pipe(res),
-	getNetwork: () => new Promise((resolve, reject) =>
-		database.store.createReadStream().pipe(concat(resolve))),
-	getServiceStatus: serviceName => new Promise((resolve, reject) => {
-		database.store.get(serviceName, (err, value) => {
-			if (err) return reject(err)
-				console.log(`[SUCCESS] ${serviceName} have been get`)
-				resolve(value)
-		})
-	})
+	getNetwork: () => services.find(),
+	updateNetwork: services => services.forEach(serviceUpdate.update),
+	getInstanceStatus: hash => services.findOne(hash)
 }
 
 module.exports = database
